@@ -6,7 +6,7 @@ enum RequestStatus { initial, success, failure }
 abstract class MfrState extends Equatable {
   const MfrState();
 
-   @override
+  @override
   List<Object?> get props => [];
 }
 
@@ -35,4 +35,14 @@ final class MfrListState extends MfrState {
 
   @override
   List<Object?> get props => [manufacturers, hasReachedMax, status];
+}
+
+final class MfrDetailsState extends MfrState {
+  final RequestStatus? status;
+  final MfrDetailsModel? mfrDetailsModel;
+
+  const MfrDetailsState({this.mfrDetailsModel, this.status});
+
+  @override
+  List<Object?> get props => [mfrDetailsModel, status];
 }

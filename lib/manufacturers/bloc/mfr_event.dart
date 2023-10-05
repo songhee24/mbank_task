@@ -7,4 +7,9 @@ sealed class MfrEvent extends Equatable {
 
 final class MfrFetched extends MfrEvent {}
 
-final class MfrFetchedById extends MfrEvent {}
+final class MfrFetchedById extends MfrEvent {
+  final int manufacturerId;
+
+  MfrFetchedById({required this.manufacturerId});
+
+}

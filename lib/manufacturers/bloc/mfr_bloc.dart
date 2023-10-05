@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:mbank_task/manufacturers/models/mfr_details_model.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 import 'package:mbank_task/manufacturers/data/mfr_repository.dart';
@@ -9,7 +10,6 @@ import 'package:mbank_task/manufacturers/models/mfr_model.dart';
 
 part 'mfr_event.dart';
 part 'mfr_state.dart';
-part 'mfr_details_state.dart';
 
 const throttleDuration = Duration(milliseconds: 500);
 
@@ -27,6 +27,24 @@ class MfrBloc extends Bloc<MfrEvent, MfrState> {
       _asyncGetManufacturers,
       transformer: throttleDroppable(throttleDuration),
     );
+    on<MfrFetchedById>(_asyncGetManufacturDetails);
+  }
+
+  Future<void> _asyncGetManufacturDetails(
+    MfrFetchedById event,
+    Emitter<MfrState> emit,
+  ) async {
+    try {
+      emit(const MfrDetailsState(status: RequestStatus.initial));
+      final manufacturer =
+          await mfrRepository.fetchManufacturer(event.manufacturerId);
+      emit(MfrDetailsState(
+        status: RequestStatus.success,
+        mfrDetailsModel: manufacturer,
+      ));
+    } catch (e) {
+      emit(const MfrDetailsState(status: RequestStatus.failure));
+    }
   }
 
   Future<void> _asyncGetManufacturers(
