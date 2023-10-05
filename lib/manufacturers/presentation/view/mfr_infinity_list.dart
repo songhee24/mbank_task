@@ -77,7 +77,7 @@ class _MfrInfinityListState extends State<MfrInfinityList> {
 
     _debounceTimer = Timer(const Duration(milliseconds: 300), () {
       if (_isBottom) {
-        context.read<MfrBloc>().add(MfrFetched());
+        context.read<MfrBloc>().add(MfrFetchedByPage());
       }
     });
   }

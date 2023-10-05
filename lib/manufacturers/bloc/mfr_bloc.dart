@@ -27,6 +27,7 @@ class MfrBloc extends Bloc<MfrEvent, MfrState> {
       _asyncGetManufacturers,
       transformer: throttleDroppable(throttleDuration),
     );
+    on<MfrFetchedByPage>(_asyncGetManufacturersByPage);
     on<MfrFetchedById>(_asyncGetManufacturDetails);
   }
 
@@ -54,16 +55,24 @@ class MfrBloc extends Bloc<MfrEvent, MfrState> {
     emit(const MfrListState(status: RequestStatus.initial));
     final currentState = state as MfrListState;
     try {
-      if (currentState.status == RequestStatus.initial) {
-        final manufacturers = await mfrRepository.fetchManufacturers(1);
-        final loadedData = currentState.copyWith(
-          manufacturers: manufacturers,
-          hasReachedMax: false,
-          status: RequestStatus.success,
-        );
-        return emit(loadedData);
-      }
+      final manufacturers = await mfrRepository.fetchManufacturers(1);
+      final loadedData = currentState.copyWith(
+        manufacturers: manufacturers,
+        hasReachedMax: false,
+        status: RequestStatus.success,
+      );
+      emit(loadedData);
+    } catch (_) {
+      emit(currentState.copyWith(status: RequestStatus.failure));
+    }
+  }
 
+  Future<void> _asyncGetManufacturersByPage(
+    MfrFetchedByPage event,
+    Emitter<MfrState> emit,
+  ) async {
+    final currentState = state as MfrListState;
+    try {
       final currentPage = (currentState.manufacturers.length / 100).ceil() + 1;
       final manufacturers = await mfrRepository.fetchManufacturers(currentPage);
       if (manufacturers.isEmpty) {

@@ -6,6 +6,7 @@ sealed class MfrEvent extends Equatable {
 }
 
 final class MfrFetched extends MfrEvent {}
+final class MfrFetchedByPage extends MfrEvent {}
 
 final class MfrFetchedById extends MfrEvent {
   final int manufacturerId;
