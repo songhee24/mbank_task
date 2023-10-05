@@ -17,9 +17,11 @@ class MfrDetailsView extends StatefulWidget {
 }
 
 class _MfrDetailsViewState extends State<MfrDetailsView> {
+
+      
   @override
   Widget build(BuildContext context) {
-    final mfrBloc = BlocProvider.of<MfrBloc>(context)
+      final mfrBloc = BlocProvider.of<MfrBloc>(context)
       ..add(MfrFetchedById(manufacturerId: widget.id));
     return Scaffold(
       appBar: AppBar(
@@ -37,9 +39,7 @@ class _MfrDetailsViewState extends State<MfrDetailsView> {
                     child: Text('failed to fetch manufacturers'));
               case RequestStatus.success:
                 return Column(
-                  children: [
-                    Text(state.mfrDetailsModel!.mfrName)
-                  ],
+                  children: [Text(state.mfrDetailsModel!.mfrName)],
                 );
               case RequestStatus.initial:
                 return const Center(child: CircularProgressIndicator());

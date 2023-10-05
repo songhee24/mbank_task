@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mbank_task/manufacturers/bloc/mfr_bloc.dart';
 import 'package:mbank_task/manufacturers/models/mfr_model.dart';
 import 'package:mbank_task/manufacturers/presentation/view/mfr_details_view.dart';
 
@@ -10,11 +12,14 @@ class MfrListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // final mfrBloc = BlocProvider.of<MfrBloc>(context)..add(MfrFetched());
+    final ctx = context.read<MfrBloc>();
     return InkWell(
-      onTap: () {
-        context.pushNamed(MfrDetailsView.routeName, pathParameters: {
+      onTap: () async {
+        await context.pushNamed(MfrDetailsView.routeName, pathParameters: {
           "id": manufacturer.mfrId.toString(),
         });
+        ctx.add(MfrFetched());
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12),

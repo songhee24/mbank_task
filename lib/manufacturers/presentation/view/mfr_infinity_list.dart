@@ -30,6 +30,7 @@ class _MfrInfinityListState extends State<MfrInfinityList> {
     return BlocBuilder<MfrBloc, MfrState>(
       bloc: mfrBloc,
       builder: (context, state) {
+        print(state);
         if (state is MfrListState) {
           switch (state.status) {
             case RequestStatus.failure:
