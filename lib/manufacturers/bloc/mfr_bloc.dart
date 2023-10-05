@@ -43,7 +43,6 @@ class MfrBloc extends Bloc<MfrEvent, MfrState> {
         mfrDetailsModel: manufacturer,
       ));
     } catch (e) {
-      print(e);
       emit(const MfrDetailsState(status: RequestStatus.failure));
     }
   }

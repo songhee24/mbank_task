@@ -14,13 +14,14 @@ class MfrDetailsModel extends Equatable {
 
   factory MfrDetailsModel.fromJson(Map<String, dynamic> json) {
     List vehicleTypesJson = json['VehicleTypes'] as List;
-    List<VehicleTypeModel> _vehicleTypeModelList =
-        vehicleTypesJson.map((e) => VehicleTypeModel.fromJson(e)).toList();
+    List<VehicleTypeModel> vehicleTypeModelList = vehicleTypesJson.map((e) {
+      return VehicleTypeModel.fromJson(e);
+    }).toList();
     final mfrName = json['Mfr_Name'] as String;
     final mfrID = json['Mfr_ID'] as int;
 
     return MfrDetailsModel(
-        mfrName: mfrName, mfrID: mfrID, vehicleTypes: _vehicleTypeModelList);
+        mfrName: mfrName, mfrID: mfrID, vehicleTypes: vehicleTypeModelList);
   }
 
   @override

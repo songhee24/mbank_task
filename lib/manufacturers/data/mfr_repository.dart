@@ -4,17 +4,14 @@ import 'package:mbank_task/manufacturers/models/mfr_model.dart';
 // import 'dart:convert';
 
 class MfrRepository {
-  static const String baseUrl =
-      "https://vpic.nhtsa.dot.gov/api/vehicles/getallmanufacturers?format=json";
+  static const String baseUrl = "https://vpic.nhtsa.dot.gov/api/vehicles";
   late MfrApi mfrApi = MfrApi();
 
   Future<List<MfrModel>> fetchManufacturers(int startIndex) async {
     try {
       final response = await mfrApi.get(
-        path: baseUrl,
-        queryParameters: {
-          'page': startIndex.toString(),
-        },
+        path: '$baseUrl/getallmanufacturers',
+        queryParameters: {'page': startIndex.toString(), 'format': 'json'},
       );
       final Map<String, dynamic> data = response.data;
       final results = data['Results'] as List;
@@ -29,8 +26,8 @@ class MfrRepository {
   Future<MfrDetailsModel> fetchManufacturer(int manufacturerId) async {
     try {
       final response = await mfrApi.get(
-        path: '$baseUrl/$manufacturerId',
-      );
+          path: '$baseUrl/getmanufacturerdetails/$manufacturerId',
+          queryParameters: {'format': 'json'});
       final Map<String, dynamic> data = response.data;
       final results = data['Results'] as List;
       return MfrDetailsModel.fromJson(results[0]);
