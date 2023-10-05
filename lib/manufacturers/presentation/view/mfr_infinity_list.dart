@@ -27,30 +27,33 @@ class _MfrInfinityListState extends State<MfrInfinityList> {
   Widget build(BuildContext context) {
     return BlocBuilder<MfrBloc, MfrState>(
       builder: (context, state) {
-        switch (state.status) {
-          case RequestStatus.failure:
-            return const Center(child: Text('failed to fetch manufacturers'));
-          case RequestStatus.success:
-            if (state.manufacturers.isEmpty) {
-              return const Center(child: Text('no manufacturers'));
-            }
-            return ListView.builder(
-              itemBuilder: (
-                BuildContext context,
-                int index,
-              ) {
-                return index >= state.manufacturers.length
-                    ? const BottomLoader()
-                    : MfrListItem(manufacturer: state.manufacturers[index]);
-              },
-              itemCount: state.hasReachedMax
-                  ? state.manufacturers.length
-                  : state.manufacturers.length + 1,
-              controller: _scrollController,
-            );
-          case RequestStatus.initial:
-            return const Center(child: CircularProgressIndicator());
+        if (state is MfrListState) {
+          switch (state.status) {
+            case RequestStatus.failure:
+              return const Center(child: Text('failed to fetch manufacturers'));
+            case RequestStatus.success:
+              if (state.manufacturers.isEmpty) {
+                return const Center(child: Text('no manufacturers'));
+              }
+              return ListView.builder(
+                itemBuilder: (
+                  BuildContext context,
+                  int index,
+                ) {
+                  return index >= state.manufacturers.length
+                      ? const BottomLoader()
+                      : MfrListItem(manufacturer: state.manufacturers[index]);
+                },
+                itemCount: state.hasReachedMax
+                    ? state.manufacturers.length
+                    : state.manufacturers.length + 1,
+                controller: _scrollController,
+              );
+            case RequestStatus.initial:
+              return const Center(child: CircularProgressIndicator());
+          }
         }
+        return const Text('Nihao');
       },
     );
   }

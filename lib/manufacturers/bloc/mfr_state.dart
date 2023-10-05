@@ -2,23 +2,31 @@ part of 'mfr_bloc.dart';
 
 enum RequestStatus { initial, success, failure }
 
-final class MfrState extends Equatable {
+@immutable
+abstract class MfrState extends Equatable {
+  const MfrState();
+
+   @override
+  List<Object?> get props => [];
+}
+
+final class MfrListState extends MfrState {
   final RequestStatus status;
   final List<MfrModel> manufacturers;
   final bool hasReachedMax;
 
-  const MfrState({
+  const MfrListState({
     this.status = RequestStatus.initial,
     this.manufacturers = const <MfrModel>[],
     this.hasReachedMax = false,
   });
 
-  MfrState copyWith({
+  MfrListState copyWith({
     RequestStatus? status,
     List<MfrModel>? manufacturers,
     bool? hasReachedMax,
   }) {
-    return MfrState(
+    return MfrListState(
       status: status ?? this.status,
       manufacturers: manufacturers ?? this.manufacturers,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
@@ -26,5 +34,5 @@ final class MfrState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [manufacturers, hasReachedMax];
+  List<Object?> get props => [manufacturers, hasReachedMax, status];
 }
