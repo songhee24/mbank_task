@@ -35,6 +35,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Manufacturers App',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 240, 232, 232),
         useMaterial3: true,
       ),
     );

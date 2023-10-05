@@ -22,6 +22,7 @@ class _MfrDetailsViewState extends State<MfrDetailsView> {
   Widget build(BuildContext context) {
     final mfrBloc = BlocProvider.of<MfrBloc>(context);
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Manufacturer details screen'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -29,7 +30,7 @@ class _MfrDetailsViewState extends State<MfrDetailsView> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            mfrBloc..add(MfrFetched());
+            mfrBloc.add(MfrFetched());
             context.pop();
           },
         ),
@@ -38,13 +39,49 @@ class _MfrDetailsViewState extends State<MfrDetailsView> {
         bloc: mfrBloc,
         builder: (context, state) {
           if (state is MfrDetailsState) {
+            final vehicleTypes = state.mfrDetailsModel?.vehicleTypes;
             switch (state.status) {
               case RequestStatus.failure:
                 return const Center(
                     child: Text('failed to fetch manufacturers'));
               case RequestStatus.success:
                 return Column(
-                  children: [Text(state.mfrDetailsModel!.mfrName)],
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      state.mfrDetailsModel!.mfrName,
+                      style: const TextStyle(
+                        fontSize: 24,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 36),
+                        child: Material(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          child: ListView.builder(
+                            itemCount: vehicleTypes?.length,
+                            itemBuilder: ((context, index) {
+                              if (vehicleTypes?[index] == null) {
+                                return null;
+                              }
+                              return Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: ListTile(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  tileColor: Colors.white,
+                                  title: Text(vehicleTypes![index].name!),
+                                ),
+                              );
+                            }),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
                 );
               case RequestStatus.initial:
                 return const Center(child: CircularProgressIndicator());
