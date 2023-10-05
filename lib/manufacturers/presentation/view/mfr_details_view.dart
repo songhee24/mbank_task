@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mbank_task/manufacturers/bloc/mfr_bloc.dart';
+import 'package:mbank_task/manufacturers/presentation/widgets/mfr_details_list_item.dart';
 
 // 'Manufacturer details screen'
 class MfrDetailsView extends StatefulWidget {
@@ -66,15 +67,8 @@ class _MfrDetailsViewState extends State<MfrDetailsView> {
                               if (vehicleTypes?[index] == null) {
                                 return null;
                               }
-                              return Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: ListTile(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  tileColor: Colors.white,
-                                  title: Text(vehicleTypes![index].name!),
-                                ),
+                              return MfrDetailsListItem(
+                                vehicleTypeModel: vehicleTypes![index],
                               );
                             }),
                           ),
