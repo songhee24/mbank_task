@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 // 'Manufacturer details screen'
 class MfrDetailsView extends StatelessWidget {
-  static const routeName = '/details_page';
+  static const routeName = '/details_page/:id';
   const MfrDetailsView({
     super.key,
   });

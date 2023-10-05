@@ -1,19 +1,18 @@
-import 'package:flutter/material.dart';
-import 'package:mbank_task/manufacturers/presentation/view/mfr_details_view.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mbank_task/manufacturers/presentation/view/manufacturers_view.dart';
+import 'package:mbank_task/manufacturers/presentation/view/mfr_details_view.dart';
 
-class AppRouter {
-  Route? onGenerateRoute(RouteSettings settings) {
-    switch (settings.name) {
-      case MfrDetailsView.routeName:
-        return MaterialPageRoute(
-          builder: (_) =>
-              const MfrDetailsView(),
-        );
-      default:
-        return MaterialPageRoute(
-          builder: (_) => const ManufacturersView(title: 'Manufacturer List'),
-        );
-    }
-  }
-}
+final router = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const ManufacturersView(),
+    ),
+    GoRoute(
+        path: MfrDetailsView.routeName,
+        builder: (context, state) {
+          // final id = state.params['id']!;
+          return const MfrDetailsView();
+        }),
+  ],
+);
