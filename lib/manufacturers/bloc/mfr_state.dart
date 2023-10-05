@@ -38,10 +38,10 @@ final class MfrListState extends MfrState {
 }
 
 final class MfrDetailsState extends MfrState {
-  final RequestStatus? status;
+  final RequestStatus status;
   final MfrDetailsModel? mfrDetailsModel;
 
-  const MfrDetailsState({this.mfrDetailsModel, this.status});
+  const MfrDetailsState({this.mfrDetailsModel, this.status = RequestStatus.initial});
 
   @override
   List<Object?> get props => [mfrDetailsModel, status];
