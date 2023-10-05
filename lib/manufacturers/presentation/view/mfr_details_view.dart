@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mbank_task/manufacturers/bloc/mfr_bloc.dart';
 
 // 'Manufacturer details screen'
@@ -17,17 +18,21 @@ class MfrDetailsView extends StatefulWidget {
 }
 
 class _MfrDetailsViewState extends State<MfrDetailsView> {
-
-      
   @override
   Widget build(BuildContext context) {
-      final mfrBloc = BlocProvider.of<MfrBloc>(context)
-      ..add(MfrFetchedById(manufacturerId: widget.id));
+    final mfrBloc = BlocProvider.of<MfrBloc>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Manufacturer details screen'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            mfrBloc..add(MfrFetched());
+            context.pop();
+          },
+        ),
       ),
       body: BlocBuilder(
         bloc: mfrBloc,
@@ -44,6 +49,9 @@ class _MfrDetailsViewState extends State<MfrDetailsView> {
               case RequestStatus.initial:
                 return const Center(child: CircularProgressIndicator());
             }
+          }
+          if (state is MfrListState) {
+            return const Text('List!!!');
           }
           return const Text('Nihao');
         },
