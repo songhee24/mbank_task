@@ -8,7 +8,7 @@ class AppRouter {
       case MfrDetailsView.routeName:
         return MaterialPageRoute(
           builder: (_) =>
-              const MfrDetailsView(title: 'Manufacturer details screen'),
+              const MfrDetailsView(),
         );
       default:
         return MaterialPageRoute(

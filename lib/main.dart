@@ -26,10 +26,6 @@ class _MyAppState extends State<MyApp> {
           create: (_) =>
               MfrBloc(mfrRepository: MfrRepository())..add(MfrFetched()),
         ),
-        // BlocProvider<MfrBloc>(
-        //   create: (_) =>
-        //       MfrBloc(mfrRepository: MfrRepository())..add(MfrFetchedById()),
-        // ),
       ],
       child: MaterialApp(
         title: 'Manufacturers App',
