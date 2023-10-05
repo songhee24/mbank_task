@@ -1,14 +1,10 @@
 class VehicleTypeModel {
-  final String gVWRFrom;
-  final String gVWRTo;
-  final bool isPrimary;
-  final String name;
+  final String? gVWRFrom;
+  final String? gVWRTo;
+  final bool? isPrimary;
+  final String? name;
 
-  VehicleTypeModel(
-      {required this.gVWRFrom,
-      required this.gVWRTo,
-      required this.isPrimary,
-      required this.name});
+  VehicleTypeModel({this.gVWRFrom, this.gVWRTo, this.isPrimary, this.name});
 
   factory VehicleTypeModel.fromJson(Map<String, dynamic> json) {
     final gVWRFrom = json['GVWRFrom'] as String;
