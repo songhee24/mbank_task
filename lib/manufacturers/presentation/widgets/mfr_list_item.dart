@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mbank_task/manufacturers/models/mfr_model.dart';
 import 'package:mbank_task/manufacturers/presentation/view/mfr_details_view.dart';
 
@@ -11,11 +12,9 @@ class MfrListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        print('selected manufacturer id ${manufacturer.mfrId}');
-        Navigator.of(context).pushNamed(
-          MfrDetailsView.routeName,
-          arguments: manufacturer.mfrId,
-        );
+        context.goNamed(MfrDetailsView.routeName, pathParameters: {
+          "id": manufacturer.mfrId.toString(),
+        });
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12),

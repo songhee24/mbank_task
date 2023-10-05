@@ -9,10 +9,11 @@ final router = GoRouter(
       builder: (context, state) => const ManufacturersView(),
     ),
     GoRoute(
-        path: MfrDetailsView.routeName,
+        path: '/${MfrDetailsView.routeName}/:id',
+        name: MfrDetailsView.routeName,
         builder: (context, state) {
-          // final id = state.params['id']!;
-          return const MfrDetailsView();
+          int id = int.parse(state.pathParameters['id']!);
+          return MfrDetailsView(id: id);
         }),
   ],
 );

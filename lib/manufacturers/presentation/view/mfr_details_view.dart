@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 
 // 'Manufacturer details screen'
 class MfrDetailsView extends StatelessWidget {
-  static const routeName = '/details_page/:id';
+  static const routeName = 'details_page';
   const MfrDetailsView({
     super.key,
+    required this.id,
   });
+
+  final int id;
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments;
-    print(args);
+    print(id);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Manufacturer details screen'),
