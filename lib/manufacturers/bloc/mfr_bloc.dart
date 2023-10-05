@@ -51,31 +51,35 @@ class MfrBloc extends Bloc<MfrEvent, MfrState> {
     MfrFetched event,
     Emitter<MfrState> emit,
   ) async {
-    final currentState = state as MfrListState;
-    try {
-      if (currentState.status == RequestStatus.initial) {
-        final manufacturers = await mfrRepository.fetchManufacturers(1);
-        final loadedData = currentState.copyWith(
-          manufacturers: manufacturers,
-          hasReachedMax: false,
-          status: RequestStatus.success,
-        );
-        return emit(loadedData);
-      }
-
-      final currentPage = (currentState.manufacturers.length / 100).ceil() + 1;
-      final manufacturers = await mfrRepository.fetchManufacturers(currentPage);
-      if (manufacturers.isEmpty) {
-        emit(currentState.copyWith(hasReachedMax: true));
-      } else {
-        emit(currentState.copyWith(
-            manufacturers: List.of(currentState.manufacturers)
-              ..addAll(manufacturers),
+    if (state is MfrListState) {
+      final currentState = state as MfrListState;
+      try {
+        if (currentState.status == RequestStatus.initial) {
+          final manufacturers = await mfrRepository.fetchManufacturers(1);
+          final loadedData = currentState.copyWith(
+            manufacturers: manufacturers,
             hasReachedMax: false,
-            status: RequestStatus.success));
+            status: RequestStatus.success,
+          );
+          return emit(loadedData);
+        }
+
+        final currentPage =
+            (currentState.manufacturers.length / 100).ceil() + 1;
+        final manufacturers =
+            await mfrRepository.fetchManufacturers(currentPage);
+        if (manufacturers.isEmpty) {
+          emit(currentState.copyWith(hasReachedMax: true));
+        } else {
+          emit(currentState.copyWith(
+              manufacturers: List.of(currentState.manufacturers)
+                ..addAll(manufacturers),
+              hasReachedMax: false,
+              status: RequestStatus.success));
+        }
+      } catch (_) {
+        emit(currentState.copyWith(status: RequestStatus.failure));
       }
-    } catch (_) {
-      emit(currentState.copyWith(status: RequestStatus.failure));
     }
   }
 }
