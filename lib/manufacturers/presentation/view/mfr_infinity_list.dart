@@ -25,7 +25,10 @@ class _MfrInfinityListState extends State<MfrInfinityList> {
 
   @override
   Widget build(BuildContext context) {
+    final mfrBloc = BlocProvider.of<MfrBloc>(context)..add(MfrFetched());
+
     return BlocBuilder<MfrBloc, MfrState>(
+      bloc: mfrBloc,
       builder: (context, state) {
         if (state is MfrListState) {
           switch (state.status) {

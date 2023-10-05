@@ -12,7 +12,7 @@ class MfrListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        context.goNamed(MfrDetailsView.routeName, pathParameters: {
+        context.pushNamed(MfrDetailsView.routeName, pathParameters: {
           "id": manufacturer.mfrId.toString(),
         });
       },
