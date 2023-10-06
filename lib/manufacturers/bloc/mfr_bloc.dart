@@ -22,6 +22,7 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
 class MfrBloc extends Bloc<MfrEvent, MfrState> {
   final MfrRepository mfrRepository;
   final DBProvider dbProvider;
+  final hasNetworkConnection = false;
 
   MfrBloc({required this.mfrRepository, required this.dbProvider})
       : super(const MfrListState()) {
@@ -57,14 +58,24 @@ class MfrBloc extends Bloc<MfrEvent, MfrState> {
     emit(const MfrListState(status: RequestStatus.initial));
     final currentState = state as MfrListState;
     try {
-      final manufacturers = await mfrRepository.fetchManufacturers(1);
-      await dbProvider.newMfrs(manufacturers);
-      final loadedData = currentState.copyWith(
-        manufacturers: manufacturers,
-        hasReachedMax: false,
-        status: RequestStatus.success,
-      );
-      emit(loadedData);
+      if (hasNetworkConnection) {
+        final manufacturers = await mfrRepository.fetchManufacturers(1);
+        await dbProvider.newMfrs(manufacturers);
+        final loadedData = currentState.copyWith(
+          manufacturers: manufacturers,
+          hasReachedMax: false,
+          status: RequestStatus.success,
+        );
+        emit(loadedData);
+      } else {
+        final manufacturers = await dbProvider.getAllManufacturers();
+        final loadedData = currentState.copyWith(
+          manufacturers: manufacturers,
+          hasReachedMax: false,
+          status: RequestStatus.success,
+        );
+        emit(loadedData);
+      }
     } catch (e) {
       print(e);
       emit(currentState.copyWith(status: RequestStatus.failure));
@@ -77,17 +88,21 @@ class MfrBloc extends Bloc<MfrEvent, MfrState> {
   ) async {
     final currentState = state as MfrListState;
     try {
-      final currentPage = (currentState.manufacturers.length / 100).ceil() + 1;
-      final manufacturers = await mfrRepository.fetchManufacturers(currentPage);
-      if (manufacturers.isEmpty) {
-        emit(currentState.copyWith(hasReachedMax: true));
-      } else {
-        emit(currentState.copyWith(
-            manufacturers: List.of(currentState.manufacturers)
-              ..addAll(manufacturers),
-            hasReachedMax: false,
-            status: RequestStatus.success));
-      }
+      if (hasNetworkConnection) {
+        final currentPage =
+            (currentState.manufacturers.length / 100).ceil() + 1;
+        final manufacturers =
+            await mfrRepository.fetchManufacturers(currentPage);
+        if (manufacturers.isEmpty) {
+          emit(currentState.copyWith(hasReachedMax: true));
+        } else {
+          emit(currentState.copyWith(
+              manufacturers: List.of(currentState.manufacturers)
+                ..addAll(manufacturers),
+              hasReachedMax: false,
+              status: RequestStatus.success));
+        }
+      } else {}
     } catch (_) {
       emit(currentState.copyWith(status: RequestStatus.failure));
     }

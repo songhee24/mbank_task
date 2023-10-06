@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:mbank_task/manufacturers/models/mfr_model.dart';
+import 'package:mbank_task/manufacturers/models/vehicle_types_model.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
@@ -72,5 +73,46 @@ class DBProvider {
         }
       }
     }
+  }
+
+  Future<List<MfrModel>> getAllManufacturers() async {
+    final db = await database;
+    final List<Map<String, dynamic>> manufacturerMaps =
+        await db.query('Manufacturer');
+    List<MfrModel> manufacturers = [];
+
+    for (var index = 0; index < manufacturerMaps.length; index++) {
+      final manufacturerId = manufacturerMaps[index]['Mfr_ID'];
+      final vehicleTypes = await getVehicleTypesForManufacturer(manufacturerId);
+
+      manufacturers.add(
+        MfrModel(
+          mfrId: manufacturerMaps[index]['Mfr_ID'],
+          country: manufacturerMaps[index]['Country'],
+          mfrName: manufacturerMaps[index]['Mfr_Name'],
+          vehicleTypes: vehicleTypes,
+        ),
+      );
+    }
+
+    return manufacturers;
+  }
+
+  Future<List<VehicleTypeModel>> getVehicleTypesForManufacturer(
+      int manufacturerId) async {
+    final db = await database;
+    final List<Map<String, dynamic>> vehicleTypeMaps = await db.query(
+      'VehicleTypes',
+      where: 'Mfr_ID = ?',
+      whereArgs: [manufacturerId],
+    );
+    return List.generate(vehicleTypeMaps.length, (index) {
+      return VehicleTypeModel(
+        gVWRFrom: vehicleTypeMaps[index]['GVWRFrom'],
+        gVWRTo: vehicleTypeMaps[index]['GVWRTo'],
+        isPrimary: vehicleTypeMaps[index]['IsPrimary'] == 1,
+        name: vehicleTypeMaps[index]['Name'],
+      );
+    });
   }
 }
