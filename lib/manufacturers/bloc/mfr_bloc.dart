@@ -40,12 +40,21 @@ class MfrBloc extends Bloc<MfrEvent, MfrState> {
   ) async {
     try {
       emit(const MfrDetailsState(status: RequestStatus.initial));
-      final manufacturer =
-          await mfrRepository.fetchManufacturer(event.manufacturerId);
-      emit(MfrDetailsState(
-        status: RequestStatus.success,
-        mfrDetailsModel: manufacturer,
-      ));
+      if (hasNetworkConnection) {
+        final manufacturer =
+            await mfrRepository.fetchManufacturer(event.manufacturerId);
+        emit(MfrDetailsState(
+          status: RequestStatus.success,
+          mfrDetailsModel: manufacturer,
+        ));
+      } else {
+        final manufacturer =
+            await dbProvider.getManufacturerById(event.manufacturerId);
+        emit(MfrDetailsState(
+          status: RequestStatus.success,
+          mfrDetailsModel: manufacturer,
+        ));
+      }
     } catch (e) {
       emit(const MfrDetailsState(status: RequestStatus.failure));
     }

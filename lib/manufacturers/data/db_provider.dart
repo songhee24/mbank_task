@@ -115,4 +115,27 @@ class DBProvider {
       );
     });
   }
+
+  Future<MfrModel> getManufacturerById(int manufacturerId) async {
+  final db = await database;
+  final List<Map<String, dynamic>> manufacturerMaps = await db.query(
+    'Manufacturer',
+    where: 'Mfr_ID = ?',
+    whereArgs: [manufacturerId],
+  );
+
+  if (manufacturerMaps.isNotEmpty) {
+    final Map<String, dynamic> manufacturerMap = manufacturerMaps.first;
+    final List<VehicleTypeModel> vehicleTypes = await getVehicleTypesForManufacturer(manufacturerId);
+
+    return MfrModel(
+      mfrId: manufacturerMap['Mfr_ID'],
+      country: manufacturerMap['Country'],
+      mfrName: manufacturerMap['Mfr_Name'],
+      vehicleTypes: vehicleTypes,
+    );
+  } else {
+    throw Exception('Manufacturer not found');
+  }
+}
 }
