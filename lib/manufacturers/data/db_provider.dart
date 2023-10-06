@@ -27,7 +27,7 @@ class DBProvider {
       await db.execute("CREATE TABLE Manufacturer ("
           "Mfr_ID INTEGER PRIMARY KEY,"
           "Country TEXT,"
-          "Mfr_Name TEXT,"
+          "Mfr_Name TEXT"
           ")");
 
       await db.execute("CREATE TABLE VehicleTypes ("
@@ -42,26 +42,37 @@ class DBProvider {
     });
   }
 
-  newMfr(MfrModel newMfr) async {
+  newMfrs(List<MfrModel> newMfrs) async {
     final db = await database;
-    var manufacturerId = await db.insert('Manufacturer', {
-      'Mfr_ID': newMfr.mfrId,
-      'Country': newMfr.country,
-      'Mfr_Name': newMfr.mfrName,
-    });
+    for (var newMfr in newMfrs) {
+      final existingMfr = await db.query(
+        'Manufacturer',
+        where: 'Mfr_ID = ?',
+        whereArgs: [newMfr.mfrId],
+      );
 
-    if (newMfr.vehicleTypes != null) {
-      for (var vehicleType in newMfr.vehicleTypes!) {
-        await db.insert('VehicleTypes', {
-          'GVWRFrom': vehicleType.gVWRFrom,
-          'GVWRTo': vehicleType.gVWRTo,
-          'IsPrimary': vehicleType.isPrimary,
-          'Name': vehicleType.name,
-          'Mfr_ID': manufacturerId, // Use inserted id
+      if (existingMfr.isEmpty) {
+        var manufacturerId = await db.insert('Manufacturer', {
+          'Mfr_ID': newMfr.mfrId,
+          'Country': newMfr.country,
+          'Mfr_Name': newMfr.mfrName,
         });
+
+        if (newMfr.vehicleTypes != null) {
+          for (var vehicleType in newMfr.vehicleTypes!) {
+            await db.insert('VehicleTypes', {
+              'GVWRFrom': vehicleType.gVWRFrom,
+              'GVWRTo': vehicleType.gVWRTo,
+              'IsPrimary': vehicleType.isPrimary,
+              'Name': vehicleType.name,
+              'Mfr_ID': manufacturerId, // Use inserted id
+            });
+          }
+        }
+      } else {
+        // Manufacturer already exists, you can handle this case as needed
+        // For example, you can update the existing record or skip it
       }
     }
-
-    return manufacturerId;
   }
 }

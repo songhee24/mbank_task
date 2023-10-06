@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:mbank_task/manufacturers/data/db_provider.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 import 'package:mbank_task/manufacturers/data/mfr_repository.dart';
@@ -20,8 +21,10 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
 
 class MfrBloc extends Bloc<MfrEvent, MfrState> {
   final MfrRepository mfrRepository;
+  final DBProvider dbProvider;
 
-  MfrBloc({required this.mfrRepository}) : super(const MfrListState()) {
+  MfrBloc({required this.mfrRepository, required this.dbProvider})
+      : super(const MfrListState()) {
     on<MfrFetched>(_asyncGetManufacturers);
     on<MfrFetchedByPage>(
       _asyncGetManufacturersByPage,
@@ -55,13 +58,15 @@ class MfrBloc extends Bloc<MfrEvent, MfrState> {
     final currentState = state as MfrListState;
     try {
       final manufacturers = await mfrRepository.fetchManufacturers(1);
+      await dbProvider.newMfrs(manufacturers);
       final loadedData = currentState.copyWith(
         manufacturers: manufacturers,
         hasReachedMax: false,
         status: RequestStatus.success,
       );
       emit(loadedData);
-    } catch (_) {
+    } catch (e) {
+      print(e);
       emit(currentState.copyWith(status: RequestStatus.failure));
     }
   }

@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mbank_task/manufacturers/bloc/mfr_bloc.dart';
+import 'package:mbank_task/manufacturers/data/db_provider.dart';
 import 'package:mbank_task/manufacturers/data/mfr_repository.dart';
 import 'package:mbank_task/manufacturers/presentation/router/app_router.dart';
 import 'package:provider/provider.dart';
 
 void main() {
   final mfrRepository = MfrRepository();
+  final dBProvider = DBProvider.db;
   runApp(
     MultiProvider(
       providers: [
         BlocProvider<MfrBloc>(
-            create: (_) => MfrBloc(mfrRepository: mfrRepository))
+            create: (_) => MfrBloc(
+                  mfrRepository: mfrRepository,
+                  dbProvider: dBProvider,
+                ))
       ],
       child: const MyApp(),
     ),
