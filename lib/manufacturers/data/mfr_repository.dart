@@ -1,5 +1,4 @@
 import 'package:mbank_task/manufacturers/data/mfr_api.dart';
-import 'package:mbank_task/manufacturers/models/mfr_details_model.dart';
 import 'package:mbank_task/manufacturers/models/mfr_model.dart';
 // import 'dart:convert';
 
@@ -19,18 +18,19 @@ class MfrRepository {
         return MfrModel.fromJson(json);
       }).toList();
     } catch (e) {
+      print(e);
       rethrow;
     }
   }
 
-  Future<MfrDetailsModel> fetchManufacturer(int manufacturerId) async {
+  Future<MfrModel> fetchManufacturer(int manufacturerId) async {
     try {
       final response = await mfrApi.get(
           path: '$baseUrl/getmanufacturerdetails/$manufacturerId',
           queryParameters: {'format': 'json'});
       final Map<String, dynamic> data = response.data;
       final results = data['Results'] as List;
-      return MfrDetailsModel.fromJson(results[0]);
+      return MfrModel.fromJson(results[0]);
     } catch (e) {
       rethrow;
     }
