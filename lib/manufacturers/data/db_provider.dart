@@ -60,18 +60,16 @@ class DBProvider {
 
         if (newMfr.vehicleTypes != null) {
           for (var vehicleType in newMfr.vehicleTypes!) {
+            final checkIsPrimaryPersisit = vehicleType.isPrimary ?? false;
             await db.insert('VehicleTypes', {
               'GVWRFrom': vehicleType.gVWRFrom,
               'GVWRTo': vehicleType.gVWRTo,
-              'IsPrimary': vehicleType.isPrimary,
+              'IsPrimary': checkIsPrimaryPersisit ? 1 : 0,
               'Name': vehicleType.name,
               'Mfr_ID': manufacturerId, // Use inserted id
             });
           }
         }
-      } else {
-        // Manufacturer already exists, you can handle this case as needed
-        // For example, you can update the existing record or skip it
       }
     }
   }
