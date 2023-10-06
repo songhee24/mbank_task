@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:mbank_task/app/bloc/network_bloc.dart';
 import 'package:mbank_task/manufacturers/data/db_provider.dart';
 import 'package:stream_transform/stream_transform.dart';
 
@@ -23,9 +24,11 @@ class MfrBloc extends Bloc<MfrEvent, MfrState> {
   final MfrRepository mfrRepository;
   final DBProvider dbProvider;
   final hasNetworkConnection = false;
+  late final NetworkBloc networkBloc;
 
   MfrBloc({required this.mfrRepository, required this.dbProvider})
       : super(const MfrListState()) {
+    networkBloc = NetworkBloc();
     on<MfrFetched>(_asyncGetManufacturers);
     on<MfrFetchedByPage>(
       _asyncGetManufacturersByPage,
@@ -40,7 +43,7 @@ class MfrBloc extends Bloc<MfrEvent, MfrState> {
   ) async {
     try {
       emit(const MfrDetailsState(status: RequestStatus.initial));
-      if (hasNetworkConnection) {
+      if (networkBloc.state is NetworkConnectedState) {
         final manufacturer =
             await mfrRepository.fetchManufacturer(event.manufacturerId);
         emit(MfrDetailsState(
@@ -67,7 +70,7 @@ class MfrBloc extends Bloc<MfrEvent, MfrState> {
     emit(const MfrListState(status: RequestStatus.initial));
     final currentState = state as MfrListState;
     try {
-      if (hasNetworkConnection) {
+      if (networkBloc.state is NetworkConnectedState) {
         final manufacturers = await mfrRepository.fetchManufacturers(1);
         await dbProvider.newMfrs(manufacturers);
         final loadedData = currentState.copyWith(
@@ -97,7 +100,7 @@ class MfrBloc extends Bloc<MfrEvent, MfrState> {
   ) async {
     final currentState = state as MfrListState;
     try {
-      if (hasNetworkConnection) {
+      if (networkBloc.state is NetworkConnectedState) {
         final currentPage =
             (currentState.manufacturers.length / 100).ceil() + 1;
         final manufacturers =
