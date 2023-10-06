@@ -8,7 +8,7 @@ part 'network_event.dart';
 class NetworkBloc extends Bloc<NetworkEvent, NetworkState> {
   late final Connectivity connectivity;
 
-  NetworkBloc() : super(NetworkInitial()) {
+  NetworkBloc() : super(NetworkConnectedState()) {
     connectivity = Connectivity();
     on<NetworkConnected>((event, emit) {
       emit(NetworkConnectedState());
