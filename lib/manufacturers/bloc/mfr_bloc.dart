@@ -80,7 +80,8 @@ class MfrBloc extends Bloc<MfrEvent, MfrState> {
         );
         emit(loadedData);
       } else {
-        final manufacturers = await dbProvider.getAllManufacturers();
+        final manufacturers =
+            await dbProvider.getAllManufacturers(limit: 80, offset: 0);
         final loadedData = currentState.copyWith(
           manufacturers: manufacturers,
           hasReachedMax: false,
@@ -108,13 +109,31 @@ class MfrBloc extends Bloc<MfrEvent, MfrState> {
         if (manufacturers.isEmpty) {
           emit(currentState.copyWith(hasReachedMax: true));
         } else {
+          List<MfrModel> copyManufacturers = List.of(currentState.manufacturers)
+            ..addAll(manufacturers);
           emit(currentState.copyWith(
-              manufacturers: List.of(currentState.manufacturers)
-                ..addAll(manufacturers),
+              manufacturers: copyManufacturers,
               hasReachedMax: false,
               status: RequestStatus.success));
+          await dbProvider.newMfrs(copyManufacturers);
         }
-      } else {}
+      } else {
+        final currentOffset = currentState.manufacturers.length; // 80
+        final currentLimit = currentOffset + currentOffset;
+
+        final manufacturers = await dbProvider.getAllManufacturers(
+          limit: currentLimit,
+          offset: currentOffset,
+        );
+        emit(
+          currentState.copyWith(
+            manufacturers: List.of(currentState.manufacturers)
+              ..addAll(manufacturers),
+            hasReachedMax: false,
+            status: RequestStatus.success,
+          ),
+        );
+      }
     } catch (_) {
       emit(currentState.copyWith(status: RequestStatus.failure));
     }

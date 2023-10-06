@@ -75,10 +75,11 @@ class DBProvider {
     }
   }
 
-  Future<List<MfrModel>> getAllManufacturers() async {
+  Future<List<MfrModel>> getAllManufacturers(
+      {required int limit, required int offset}) async {
     final db = await database;
     final List<Map<String, dynamic>> manufacturerMaps =
-        await db.query('Manufacturer');
+        await db.query('Manufacturer', limit: limit, offset: offset);
     List<MfrModel> manufacturers = [];
 
     for (var index = 0; index < manufacturerMaps.length; index++) {
@@ -117,25 +118,26 @@ class DBProvider {
   }
 
   Future<MfrModel> getManufacturerById(int manufacturerId) async {
-  final db = await database;
-  final List<Map<String, dynamic>> manufacturerMaps = await db.query(
-    'Manufacturer',
-    where: 'Mfr_ID = ?',
-    whereArgs: [manufacturerId],
-  );
-
-  if (manufacturerMaps.isNotEmpty) {
-    final Map<String, dynamic> manufacturerMap = manufacturerMaps.first;
-    final List<VehicleTypeModel> vehicleTypes = await getVehicleTypesForManufacturer(manufacturerId);
-
-    return MfrModel(
-      mfrId: manufacturerMap['Mfr_ID'],
-      country: manufacturerMap['Country'],
-      mfrName: manufacturerMap['Mfr_Name'],
-      vehicleTypes: vehicleTypes,
+    final db = await database;
+    final List<Map<String, dynamic>> manufacturerMaps = await db.query(
+      'Manufacturer',
+      where: 'Mfr_ID = ?',
+      whereArgs: [manufacturerId],
     );
-  } else {
-    throw Exception('Manufacturer not found');
+
+    if (manufacturerMaps.isNotEmpty) {
+      final Map<String, dynamic> manufacturerMap = manufacturerMaps.first;
+      final List<VehicleTypeModel> vehicleTypes =
+          await getVehicleTypesForManufacturer(manufacturerId);
+
+      return MfrModel(
+        mfrId: manufacturerMap['Mfr_ID'],
+        country: manufacturerMap['Country'],
+        mfrName: manufacturerMap['Mfr_Name'],
+        vehicleTypes: vehicleTypes,
+      );
+    } else {
+      throw Exception('Manufacturer not found');
+    }
   }
-}
 }
