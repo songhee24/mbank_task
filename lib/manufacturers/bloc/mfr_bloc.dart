@@ -22,11 +22,11 @@ class MfrBloc extends Bloc<MfrEvent, MfrState> {
   final MfrRepository mfrRepository;
 
   MfrBloc({required this.mfrRepository}) : super(const MfrListState()) {
-    on<MfrFetched>(
-      _asyncGetManufacturers,
+    on<MfrFetched>(_asyncGetManufacturers);
+    on<MfrFetchedByPage>(
+      _asyncGetManufacturersByPage,
       transformer: throttleDroppable(throttleDuration),
     );
-    on<MfrFetchedByPage>(_asyncGetManufacturersByPage);
     on<MfrFetchedById>(_asyncGetManufacturDetails);
   }
 
